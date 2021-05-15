@@ -28,9 +28,14 @@ namespace IMDB.Controllers
             _born = born;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+           int currentMonth = DateTime.Now.Month;
+
+            var actors = from a in _born.Actor.Where(a => (a.Birthday).Month == currentMonth)
+                    select a;
+
+            return View(await actors.Take(10).ToListAsync());;
         }
 
         public async Task<IActionResult> BornThisMonth()
