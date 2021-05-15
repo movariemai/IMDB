@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<MvcMovie.Models.Movies>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -29,7 +31,7 @@
 		<div class="carousel-caption">
 			<h1 class="display-2">TOP PICKS</h1>
 			<h3>TV shows and movies just for you</h3>
-			<a href="#"><button type="button" class="btn btn-outline-light btn-lg">Watch full list</button></a>
+			<a asp-controller="Home" asp-action="TopMovies"><button type="button" class="btn btn-outline-light btn-lg">Watch full list</button></a>
 		</div>
 	</div>
 	<div class="carousel-item">
@@ -37,7 +39,7 @@
 		<div class="carousel-caption">
 			<h1 class="display-2">TOP PICKS</h1>
 			<h3>TV shows and movies just for you</h3>
-			<a href="#"><button type="button" class="btn btn-outline-light btn-lg">Watch full list</button></a>
+			<a asp-controller="Home" asp-action="TopMovies"><button type="button" class="btn btn-outline-light btn-lg">Watch full list</button></a>
 		</div>
 	</div>
 	<div class="carousel-item">
@@ -45,9 +47,82 @@
 		<div class="carousel-caption">
 			<h1 class="display-2">TOP PICKS</h1>
 			<h3>TV shows and movies just for you</h3>
-			<a href="#"><button type="button" class="btn btn-outline-light btn-lg">Watch full list</button></a>
+			<a asp-controller="Home" asp-action="TopMovies"><button type="button" class="btn btn-outline-light btn-lg">Watch full list</button></a>
 		</div>
 	</div>
 </div>
 </div>
 <div id="wtw" class="col-12"></div>
+
+
+<br>
+<!--TOP 10 Movies Carousel-->
+
+
+
+<div class="container-fluid padding">
+    <div class="row">
+        <div class="col-1">
+
+        </div>
+        <div class="col-9" style="padding-bottom:unset;">
+            <a asp-controller="Home" asp-action="TopMovies">
+                <h1>Top 10 Movies</h1>
+            </a>
+            <h5>Here are the best movies according to the ratings!</h5>
+
+        </div>
+        <hr />
+    </div>
+
+    <div id="carousel-month" class="carousel slide" data-interval="false">
+        <div class="carousel-inner">
+
+            @foreach (var group in Model.Select((x, index) => new { element = x, index }).GroupBy(x => x.index / 5, x => x.element))
+            {
+                <div class="carousel-item @((group.Key == 0)?Html.Raw("active"):Html.Raw(""))">
+                    <div class="row justify-content-center">
+
+                        @foreach (var item in group)
+                        {
+                            <div class="col-2">
+                                <div class="card card-dsp">
+                                    @{
+                                        string ImgPath = "https://image.tmdb.org/t/p/w300" + item.Poster_path;
+                                    }
+                                    <a asp-controller="Movies" asp-action="Details" asp-route-id="@item.Id"><img src="@ImgPath" class="card-img-top" alt="..."></a>
+                                    <div class="card-body">
+                                        <p><img src="~/img/yellow_star.svg" style="vertical-align: sub; width:20px; height:20px"> @Html.DisplayFor(modelItem => item.Rating)</p>
+                                        <a asp-controller="Movies" asp-action="Details" asp-route-id="@item.Id"><h6 class="card-title pb-1 text-truncate">@Html.DisplayFor(modelItem => item.Title)</h6></a>
+                                        <div>
+                                            <p class="card-text text-truncate text-muted small">@Html.DisplayFor(modelItem => item.Genre)</p>
+                                        </div>
+
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+											<br />
+                                            <a class="btn btn-dark btn-block" asp-controller="Watchlist" asp-action="NewMovie" asp-route-CurrentMovieId="@item.Id">Add to Watchlist</a>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+        <a class="carousel-control-prev" href="#carousel-month" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carousel-month" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+</div>

@@ -25,15 +25,21 @@ namespace IMDB.Controllers
             _released = released;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            int currentMonth = DateTime.Now.Month;
+
+            var movies = from m in _released.Movies orderby m.Rating descending
+                    select m;
+
+
+            return View(await movies.Take(10).ToListAsync());
         }
 
         public async Task<IActionResult> TopMovies()
         {
             var movies = from m in _released.Movies.Where(m => m.Rating >= 8) orderby m.Rating descending
-                         select m;
+                        select m;
             
             return View(await movies.ToListAsync());
         }
