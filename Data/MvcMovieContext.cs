@@ -57,28 +57,31 @@ namespace MvcMovie.Data
                         var firstVideo =(JObject) vObject.First;
                         videoKey =(string)firstVideo["key"];
                         }catch {}
-                        modelBuilder.Entity<Movies>().HasData(
-                            new Movies{
-                                Id = counter,
-                                Title = (string)item["original_title"],
-                                ReleaseDate = DateTime.Parse(date),
-                                Genre = genre,
-                                Rating = (decimal)item["vote_average"],
-                                Poster_path= (string)item["poster_path"],
-                                Overview=(string)item["overview"],
-                                Cast = cast,
-                                Videokey= videoKey,
-                                Votes = new Random().Next(100,1000)
-                            }
-                        );
-                         modelBuilder.Entity<MovieComment>().HasData(
-                            new MovieComment {
-                                Id = counter,
-                                MId = counter,
-                                Creator = "Developers",
-                                Text = "This is a sample text for " + (string)item["original_title"]
-                            }
-                        );
+                        var poster = (string)item["poster_path"];
+                        if(poster != null && poster != ""){
+                            modelBuilder.Entity<Movies>().HasData(
+                                new Movies{
+                                    Id = counter,
+                                    Title = (string)item["original_title"],
+                                    ReleaseDate = DateTime.Parse(date),
+                                    Genre = genre,
+                                    Rating = (decimal)item["vote_average"],
+                                    Poster_path= (string)item["poster_path"],
+                                    Overview=(string)item["overview"],
+                                    Cast = cast,
+                                    Videokey= videoKey,
+                                    Votes = new Random().Next(100,1000)
+                                }
+                            );
+                            modelBuilder.Entity<MovieComment>().HasData(
+                                new MovieComment {
+                                    Id = counter,
+                                    MId = counter,
+                                    Creator = "Developers",
+                                    Text = "This is a sample text for " + (string)item["original_title"]
+                                }
+                            );
+                        }
                     }
                     counter += 1;
                 }
@@ -86,7 +89,7 @@ namespace MvcMovie.Data
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            seedMovies(builder);
+            //seedMovies(builder);
         }
         public DbSet<Watchlist> Watchlist { get; set; }
         public DbSet<MovieComment> MComments { get; set; }

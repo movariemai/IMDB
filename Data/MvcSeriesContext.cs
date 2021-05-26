@@ -19,7 +19,7 @@ namespace MvcSeries.Data
             JArray genrejObject = (JArray)genreResponse["genres"];
 
             JArray seriesObject = new JArray();
-            for(int i=1; i<100; i++){
+            for(int i=1; i<70; i++){
                 const string URL = "https://api.themoviedb.org/3/tv/popular";
                 string urlParameters = $"?api_key={Environment.GetEnvironmentVariable("API")}&language=en-US&page={i}";
                 var seriesReponse = HTTP.Response.returnResponse(URL, urlParameters);
@@ -58,29 +58,33 @@ namespace MvcSeries.Data
                             videoKey = (string)firstVideo["key"];
                         }
                         catch { }
-                        modelBuilder.Entity<Series>().HasData(
-                            new Series{
-                                Id = counter,
-                                Title = (string)item["original_name"],
-                                ReleaseDate = DateTime.Parse(release),
-                                Genre = genre,
-                                Seasons = (int)seriesResponse["number_of_seasons"],
-                                Rating = (decimal)item["vote_average"],
-                                Poster_path = (string)item["poster_path"],
-                                Overview = (string)item["overview"],
-                                Cast = cast,
-                                Votes = new Random().Next(100,1000),
-                                Videokey=videoKey
-                            }
-                        );
-                        modelBuilder.Entity<SeriesComment>().HasData(
-                            new SeriesComment {
-                                Id = counter,
-                                SId = counter,
-                                Creator = "Developers",
-                                Text = "This is a sample text for " + (string)item["original_name"]
-                            }
-                        );
+                        var poster = (string)item["poster_path"];
+                        if(poster != null && poster != ""){
+                            modelBuilder.Entity<Series>().HasData(
+                                new Series{
+                                    Id = counter,
+                                    Title = (string)item["original_name"],
+                                    ReleaseDate = DateTime.Parse(release),
+                                    Genre = genre,
+                                    Seasons = (int)seriesResponse["number_of_seasons"],
+                                    Rating = (decimal)item["vote_average"],
+                                    Poster_path = (string)item["poster_path"],
+                                    Overview = (string)item["overview"],
+                                    Cast = cast,
+                                    Votes = new Random().Next(100,1000),
+                                    Videokey=videoKey
+                                }
+                            );
+                            modelBuilder.Entity<SeriesComment>().HasData(
+                                new SeriesComment {
+                                    Id = counter,
+                                    SId = counter,
+                                    Creator = "Developers",
+                                    Text = "This is a sample text for " + (string)item["original_name"]
+                                }
+                            );
+                        }
+
                     }
                     counter += 1;
                 }
@@ -88,7 +92,7 @@ namespace MvcSeries.Data
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            seedSeries(builder);
+            //seedSeries(builder);
         }
         public DbSet<SeriesComment> SComments {get; set;}
 

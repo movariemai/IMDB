@@ -39,13 +39,16 @@ namespace MvcActor.Data
                 actor.Bio = (string)detailsResponse["biography"];
                 actor.Birthday = DateTime.Parse((string)detailsResponse["birthday"] ?? "10/10/2010");
                 actor.Profile_pic_path = (string)detailsResponse["profile_path"];
-                modelBuilder.Entity<Actor>().HasData(actor);
+                var poster = (string)detailsResponse["profile_path"];
+                if(poster != null && poster != ""){
+                    modelBuilder.Entity<Actor>().HasData(actor);
+                }
                 counter += 1;
             };
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            seedActors(builder);
+            //seedActors(builder);
         }
         public DbSet<Actor> Actor { get; set; }
     };
